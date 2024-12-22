@@ -1,5 +1,4 @@
-#ifndef ATTACK_H
-#define ATTACK_H
+#pragma once
 
 #include <string>
 
@@ -15,5 +14,3 @@ public:
     std::string getType() const;
     std::string getName() const; 
 };
-
-#endif // ATTACK_H

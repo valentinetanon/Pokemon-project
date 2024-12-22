@@ -1,5 +1,6 @@
 #include "core.hpp"
 #include "pokemon.hpp"
+#include "attackFactory.hpp"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -109,15 +110,15 @@ void Core::handleAttackTurn(std::unique_ptr<Pokemon>& attacker, std::unique_ptr<
         std::cout << "Choisissez une attaque ou passez votre tour :\n";
         int attackIndex = 1;
         for (const auto& attack : attacks) {
-            std::cout << attackIndex << ". " << attack.getName()
-                      << " (" << attack.getDamage() << " dégâts, Type: " << attack.getType() << ")\n";
+            std::cout << attackIndex << ". " << attack->getName()
+                      << " (" << attack->getDamage() << " dégâts, Type: " << attack->getType() << ")\n";
             attackIndex++;
         }
         std::cout << attackIndex << ". Ne rien faire\n";
 
         int attackChoice = getValidInput(1, attackIndex);
         if (attackChoice >= 1 && attackChoice < attackIndex) {
-            const Attack& chosenAttack = attacks[attackChoice - 1];
+            auto chosenAttack = attacks[attackChoice - 1];
             attacker->attack(defender, chosenAttack);
         } else {
             std::cout << attacker->getName() << " passe son tour !\n";
@@ -254,7 +255,7 @@ void Core::addAttacksToPokemon(std::unique_ptr<Pokemon>& pokemon) {
             }
         } while (attackDamage <= 0);
 
-        pokemon->addAttack(Attack(attackName, attackType, (float)attackDamage));
+        pokemon->addAttack(AttackFactory::createAttack(attackName, attackType, (float)attackDamage));
     }
 }
 

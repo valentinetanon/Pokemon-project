@@ -10,6 +10,7 @@ NAME = pokemon
 SRCS = main.cpp \
        attack.cpp \
        pokemon.cpp \
+	   attackFactory.cpp \
        core.cpp
 
 OBJS = $(SRCS:.cpp=.o)

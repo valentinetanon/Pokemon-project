@@ -1,9 +1,10 @@
 #include "pokemon.hpp"
+#include "attackFactory.hpp"
 #include <sstream>
 #include <iostream>
 #include <memory>
 
-void Pokemon::addAttack(const Attack& attack) {
+void Pokemon::addAttack(std::shared_ptr<Attack> attack) {
     if (attacks.size() < 4) {
         attacks.push_back(attack);
     } else {
@@ -11,10 +12,10 @@ void Pokemon::addAttack(const Attack& attack) {
     }
 }
 
-void Pokemon::attack(std::unique_ptr<Pokemon> &target, const Attack& attack) {
+void Pokemon::attack(std::unique_ptr<Pokemon> &target, std::shared_ptr<Attack> attack) {
     const std::string targetType = target->getType();
-    const std::string attackType = attack.getType();
-    float finalDamages = attack.getDamage();
+    const std::string attackType = attack->getType();
+    float finalDamages = attack->getDamage();
 
     if (attackType == "eau" && targetType == "eau ") {
         finalDamages *= 0.5;
@@ -29,8 +30,8 @@ void Pokemon::attack(std::unique_ptr<Pokemon> &target, const Attack& attack) {
         finalDamages *= 0.5;
     }
 
-    std::cout << name << " attaque " << target->getName() << " avec " << attack.getName()
-              << " pour " << attack.getDamage() << " dégâts !\n";
+    std::cout << name << " attaque " << target->getName() << " avec " << attack->getName()
+              << " pour " << attack->getDamage() << " dégâts !\n";
     target->takeDamage(finalDamages);
 }
 
@@ -67,7 +68,7 @@ std::string Pokemon::serialize() const {
     std::ostringstream oss;
     oss << name << "," << hp << "," << type << ",";
     for (const auto& attack : attacks) {
-        oss << attack.getName() << ":" << attack.getDamage() << ":" << attack.getType() << ";";
+        oss << attack->getName() << ":" << attack->getDamage() << ":" << attack->getType() << ";";
     }
     return oss.str();
 }
@@ -99,8 +100,7 @@ Pokemon Pokemon::deserialize(const std::string& data) {
         attackStream.ignore();
         std::getline(attackStream, attackType, ':');
 
-        pokemon.addAttack(Attack(attackName, attackType, attackDamage));
+        pokemon.addAttack(AttackFactory::createAttack(attackName, attackType, attackDamage));
     }
-
     return pokemon;
 }

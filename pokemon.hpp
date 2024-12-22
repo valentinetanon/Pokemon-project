@@ -1,5 +1,4 @@
-#ifndef POKEMON_H
-#define POKEMON_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -12,15 +11,15 @@ private:
     float hp;
     float initialHP;
     std::string type;
-    std::vector<Attack> attacks;
+    std::vector<std::shared_ptr<Attack>> attacks;
 
 public:
     Pokemon(const std::string& name, float hp, const std::string& type)
         : name(name), hp(hp), initialHP(hp), type(type) {};
     Pokemon() = default;
 
-    void addAttack(const Attack& attack);
-    void attack(std::unique_ptr<Pokemon> &target, const Attack& attack);
+    void addAttack(std::shared_ptr<Attack> attack);
+    void attack(std::unique_ptr<Pokemon> &target, std::shared_ptr<Attack> attack);
     void takeDamage(float damage);
     bool isAlive() const;
     std::string getName() const;
@@ -32,7 +31,5 @@ public:
     void setType(const std::string& type) { this->type = type; }
     void resetToInitialHP();
 
-    const std::vector<Attack>& getAttacks() const { return attacks; }
+    const std::vector<std::shared_ptr<Attack>> getAttacks() const { return attacks; }
 };
-
-#endif // POKEMON_H

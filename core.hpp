@@ -1,5 +1,4 @@
-#ifndef CORE_HPP
-#define CORE_HPP
+#pragma once
 
 #include "pokemon.hpp"
 #include <map>
@@ -27,5 +26,3 @@ public:
     void handleCombatOutcome(std::unique_ptr<Pokemon>& winner, std::unique_ptr<Pokemon>& loser);
 
 };
-
-#endif // CORE_HPP
