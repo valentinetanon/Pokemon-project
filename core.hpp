@@ -24,5 +24,4 @@ public:
     void executeCombat(std::unique_ptr<Pokemon>& pokemon1, std::unique_ptr<Pokemon>& pokemon2);
     void processCombatOutcome(std::unique_ptr<Pokemon>& pokemon1, std::unique_ptr<Pokemon>& pokemon2);
     void handleCombatOutcome(std::unique_ptr<Pokemon>& winner, std::unique_ptr<Pokemon>& loser);
-
 };
