@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2024
+** Pokemon-project
+** File description:
+** attack.cpp
+*/
+
 #include "attack.hpp"
 
 Attack::Attack(const std::string& name, const std::string& type, float damage)

@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2024
+** Pokemon-project
+** File description:
+** attack.hpp
+*/
+
 #pragma once
 
 #include <string>

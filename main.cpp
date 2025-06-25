@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2024
+** Pokemon-project
+** File description:
+** main.cpp
+*/
+
 #include <iostream>
 #include <limits>
 #include "core.hpp"
@@ -28,30 +35,33 @@ int main() {
 
     int choix;
     do {
-        std::cout << "1. Créer un Pokémon\n2. Supprimer un Pokémon\n3. Commencer un combat\n4. Quitter\n";
-        choix = getValidInput(1, 4);
+        std::cout << "1. Créer un dresseur\n2. Créer un Pokémon\n3. Supprimer un Pokémon\n4. Commencer un combat\n5. Quitter\n";
+        choix = getValidInput(1, 5);
 
         switch (choix) {
         case 1:
+            core.createDresser();
+            break;        
+        case 2:
             core.createPokemon();
             break;
-        case 2: {
+        case 3: {
             std::string name;
             std::cout << "Nom du Pokémon à supprimer: ";
             std::cin >> name;
             core.deletePokemon(name);
             break;
         }
-        case 3:
+        case 4:
             core.startCombat();
             break;
-        case 4:
+        case 5:
             std::cout << "Au revoir !\n";
             break;
         default:
             std::cout << "Choix invalide. Veuillez réessayer.\n";
         }
-    } while (choix != 4);
+    } while (choix != 5);
 
     return 0;
 }

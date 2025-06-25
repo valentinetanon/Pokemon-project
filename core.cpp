@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2024
+** Pokemon-project
+** File description:
+** core.cpp
+*/
+
 #include "core.hpp"
 #include "pokemon.hpp"
 #include "attackFactory.hpp"
@@ -41,11 +48,22 @@ void Core::savePokemon(const std::string& filename) {
         std::cerr << "Erreur lors de l'ouverture du fichier : " << filename << std::endl;
         return;
     }
-    for (const auto& pair : pokemons) {
-        file << pair.second->serialize() << std::endl;
+
+    for (const auto& pair : dressers) {
+        const std::string& dresseurName = pair.first;
+        const std::unique_ptr<Dresser>& dresser = pair.second;
+
+        file << "[DRESSEUR] " << dresseurName << "\n";
+
+        for (const auto& pokemon : dresser->getPokemons()) {
+            file << pokemon->serialize() << "\n";
+        }
+
+        file << "\n";
     }
+
     file.close();
-    std::cout << "Pokémons sauvegardés dans " << filename << "." << std::endl;
+    std::cout << "Pokémons sauvegardés par dresseur dans " << filename << ".\n";
 }
 
 void Core::displayAvailablePokemons() const {
@@ -210,6 +228,20 @@ std::string Core::getPokemonName() {
     return name;
 }
 
+std::string Core::getDresserName() {
+    std::string name;
+    do {
+        std::cout << "Nom du Dresseur : ";
+        std::cin >> name;
+        if (!isValidName(name)) {
+            std::cout << "Erreur : le nom doit uniquement contenir des lettres.\n";
+        } else if (dressers.find(name) != dressers.end()) {
+            std::cout << "Erreur : un Dresseur avec ce nom existe déjà.\n";
+        }
+    } while (!isValidName(name) || dressers.find(name) != dressers.end());
+    return name;
+}
+
 int Core::getPokemonHP() {
     int hp;
     do {
@@ -259,18 +291,50 @@ void Core::addAttacksToPokemon(std::unique_ptr<Pokemon>& pokemon) {
     }
 }
 
+std::string Core::selectDresserForPokemon() {
+    std::cout << "Choisissez un dresseur à qui attribuer ce Pokémon :\n";
+    int index = 1;
+    std::vector<std::string> dresseurNames;
+    for (const auto& pair : dressers) {
+        std::cout << index << ". " << pair.first << "\n";
+        dresseurNames.push_back(pair.first);
+        ++index;
+    }
+
+    int choice = getValidInput(1, static_cast<int>(dresseurNames.size()));
+    return dresseurNames[choice - 1];
+}
+
 void Core::createPokemon() {
+    if (dressers.empty()) {
+        std::cout << "Aucun dresseur n'existe. Veuillez en créer un avant de créer un Pokemon. \n";
+        return;
+    }
+
     std::string name = getPokemonName();
     int hp = getPokemonHP();
     std::string type = getValidType();
 
     auto pokemon = std::make_unique<Pokemon>(name, (float)hp, type);
-
     addAttacksToPokemon(pokemon);
+
+    std::string selectedDresserName = selectDresserForPokemon();
 
     pokemons[name] = std::move(pokemon);
     std::cout << "Pokémon " << name << " créé avec succès.\n";
 
     savePokemon("pokemons.txt");
     std::cout << "Pokémon sauvegardé automatiquement dans le fichier.\n";
+}
+
+void Core::createDresser() {
+    std::string name = getDresserName();
+
+    auto dresser = std::make_unique<Dresser>(name);
+
+    dressers[name] = std::move(dresser);
+    std::cout << "Dresseur " << name << " créé avec succès.\n";
+
+    savePokemon("pokemons.txt");
+    std::cout << "Dresseur sauvegardé automatiquement dans le fichier.\n";
 }

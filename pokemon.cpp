@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2024
+** Pokemon-project
+** File description:
+** pokemon.cpp
+*/
+
 #include "pokemon.hpp"
 #include "attackFactory.hpp"
 #include <sstream>
