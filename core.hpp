@@ -21,6 +21,7 @@ private:
 public:
     void loadPokemon(const std::string& filename);
     void savePokemon(const std::string& filename);
+    void saveDressers(const std::string& filename);
     void deletePokemon(const std::string& name);
     void createPokemon();
     void startCombat();

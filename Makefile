@@ -27,7 +27,7 @@ clean:
 
 fclean: clean
 	rm -f $(NAME) 
-	rm -f pokemons.txt
+	rm -f *.txt
 
 re: fclean all
 

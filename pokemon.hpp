@@ -19,6 +19,7 @@ private:
     float initialHP;
     std::string type;
     std::vector<std::shared_ptr<Attack>> attacks;
+    int potions = 2;
 
 public:
     Pokemon(const std::string& name, float hp, const std::string& type)
@@ -37,6 +38,9 @@ public:
     static Pokemon deserialize(const std::string& data);
     void setType(const std::string& type) { this->type = type; }
     void resetToInitialHP();
+    bool usePotion();
+
+    int getPotionCount() const { return potions; }
 
     const std::vector<std::shared_ptr<Attack>> getAttacks() const { return attacks; }
 };

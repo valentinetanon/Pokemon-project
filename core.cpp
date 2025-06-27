@@ -49,22 +49,30 @@ void Core::savePokemon(const std::string& filename) {
         return;
     }
 
-    for (const auto& pair : dressers) {
-        const std::string& dresseurName = pair.first;
-        const std::unique_ptr<Dresser>& dresser = pair.second;
-
-        file << "[DRESSEUR] " << dresseurName << "\n";
-
-        for (const auto& pokemon : dresser->getPokemons()) {
-            file << pokemon->serialize() << "\n";
-        }
-
-        file << "\n";
+    for (const auto& pair : pokemons) {
+        file << pair.second->serialize() << "\n";
     }
 
     file.close();
-    std::cout << "Pokémons sauvegardés par dresseur dans " << filename << ".\n";
+    std::cout << "Pokémons sauvegardés dans " << filename << ".\n";
 }
+
+void Core::saveDressers(const std::string& filename) {
+    std::ofstream file(filename);
+    if (!file) {
+        std::cerr << "Erreur lors de l'ouverture du fichier dresseur : " << filename << std::endl;
+        return;
+    }
+
+    for (const auto& pair : dressers) {
+        file << pair.first << "\n";
+    }
+
+    file.close();
+    std::cout << "Dresseurs sauvegardés dans " << filename << ".\n";
+}
+
+
 
 void Core::displayAvailablePokemons() const {
     std::cout << "Pokémons disponibles : \n";
@@ -122,25 +130,35 @@ void Core::executeCombat(std::unique_ptr<Pokemon>& pokemon1, std::unique_ptr<Pok
 void Core::handleAttackTurn(std::unique_ptr<Pokemon>& attacker, std::unique_ptr<Pokemon>& defender) {
     std::cout << "\nC'est au tour de " << attacker->getName() << " d'attaquer !\n";
     const auto& attacks = attacker->getAttacks();
+
     if (attacks.empty()) {
         std::cout << attacker->getName() << " n'a pas d'attaques et passe son tour !\n";
-    } else {
-        std::cout << "Choisissez une attaque ou passez votre tour :\n";
-        int attackIndex = 1;
-        for (const auto& attack : attacks) {
-            std::cout << attackIndex << ". " << attack->getName()
-                      << " (" << attack->getDamage() << " dégâts, Type: " << attack->getType() << ")\n";
-            attackIndex++;
-        }
-        std::cout << attackIndex << ". Ne rien faire\n";
+        return;
+    }
 
-        int attackChoice = getValidInput(1, attackIndex);
-        if (attackChoice >= 1 && attackChoice < attackIndex) {
-            auto chosenAttack = attacks[attackChoice - 1];
-            attacker->attack(defender, chosenAttack);
-        } else {
-            std::cout << attacker->getName() << " passe son tour !\n";
-        }
+    std::cout << "Choisissez une action :\n";
+    int attackIndex = 1;
+    for (const auto& attack : attacks) {
+        std::cout << attackIndex << ". Attaquer avec " << attack->getName()
+                  << " (" << attack->getDamage() << " dégâts, Type: " << attack->getType() << ")\n";
+        attackIndex++;
+    }
+
+    int potionOption = attackIndex;
+    std::cout << potionOption << ". Utiliser une potion (" << attacker->getPotionCount() << " restantes)\n";
+
+    int skipOption = potionOption + 1;
+    std::cout << skipOption << ". Ne rien faire\n";
+
+    int choice = getValidInput(1, skipOption);
+
+    if (choice >= 1 && choice < potionOption) {
+        auto chosenAttack = attacks[choice - 1];
+        attacker->attack(defender, chosenAttack);
+    } else if (choice == potionOption) {
+        attacker->usePotion();
+    } else {
+        std::cout << attacker->getName() << " passe son tour !\n";
     }
 }
 
@@ -154,6 +172,7 @@ void Core::handleCombatOutcome(std::unique_ptr<Pokemon>& winner, std::unique_ptr
 
     pokemons[winner->getName()] = std::move(winner);
     savePokemon("pokemons.txt");
+    saveDressers("dresseur.txt");
 }
 
 void Core::processCombatOutcome(std::unique_ptr<Pokemon>& pokemon1, std::unique_ptr<Pokemon>& pokemon2) {
@@ -335,6 +354,6 @@ void Core::createDresser() {
     dressers[name] = std::move(dresser);
     std::cout << "Dresseur " << name << " créé avec succès.\n";
 
-    savePokemon("pokemons.txt");
+    saveDressers("dresser.txt");
     std::cout << "Dresseur sauvegardé automatiquement dans le fichier.\n";
 }

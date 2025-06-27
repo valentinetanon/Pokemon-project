@@ -14,6 +14,7 @@ int getValidInput(int min, int max) {
     while (true) {
         std::cout << "Votre choix : ";
         std::cin >> input;
+        std::cout << "\n";
 
         if (std::cin.fail()) {
             std::cin.clear();

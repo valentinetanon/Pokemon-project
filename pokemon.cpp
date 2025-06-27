@@ -111,3 +111,18 @@ Pokemon Pokemon::deserialize(const std::string& data) {
     }
     return pokemon;
 }
+
+bool Pokemon::usePotion() {
+    if (potions <= 0) {
+        std::cout << name << " n'a plus de potions !\n";
+        return false;
+    }
+
+    hp += 2;
+    if (hp > initialHP)
+        hp = initialHP;
+    
+    potions--;
+    std::cout << name << " utilise une potions et récupère 2 PV. PV actuels : " << hp << "\n";
+    return true;
+}
